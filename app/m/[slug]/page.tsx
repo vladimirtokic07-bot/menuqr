@@ -1,7 +1,8 @@
 "use client"
 
 import { useMemo, useState } from "react"
-import { ArrowLeft, ChevronRight, Clock3, Flame, Leaf, Search, X } from "lucide-react"
+import { ChevronRight, Clock3, Flame, Leaf, Search } from "lucide-react"
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 
 type MenuItem = {
   name: string
@@ -148,12 +149,14 @@ export default function PublicMenuPage() {
         <button type="button" onClick={() => window.alert("Your waiter has been notified.")} className="mx-auto flex h-12 w-full max-w-xl items-center justify-center rounded-2xl bg-[#173b2d] text-sm font-semibold text-white shadow-[0_8px_24px_rgba(23,59,45,0.2)] transition hover:bg-[#24533f]">Call waiter</button>
       </div>
 
-      {selectedItem && <div className="fixed inset-0 z-30 flex items-end justify-center bg-[#10251c]/35 p-0 backdrop-blur-[2px]" role="presentation" onClick={() => setSelectedItem(null)}>
-        <section role="dialog" aria-modal="true" aria-labelledby="item-title" onClick={(event) => event.stopPropagation()} className="max-h-[92vh] w-full max-w-xl overflow-y-auto rounded-t-[2rem] bg-[#fbfaf6] shadow-2xl">
-          <div className="relative h-56 sm:h-72"><img src={selectedItem.image} alt="" className="size-full object-cover" /><button type="button" aria-label="Close details" onClick={() => setSelectedItem(null)} className="absolute right-4 top-4 flex size-9 items-center justify-center rounded-full bg-[#173b2d]/80 text-white backdrop-blur"><X className="size-4" /></button></div>
-          <div className="flex flex-col gap-5 p-6 pb-9"><div className="flex items-start justify-between gap-4"><div><p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#a06d42]">{selectedItem.category}</p><h2 id="item-title" className="mt-1 font-serif text-3xl text-[#173b2d]">{selectedItem.name}</h2></div><p className="pt-2 text-lg font-semibold text-[#a06d42]">{selectedItem.price}</p></div><p className="text-sm leading-7 text-[#626b61]">{selectedItem.fullDescription}</p><div className="grid grid-cols-2 gap-3"><div className="rounded-2xl bg-white p-4"><p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#93988e]">Allergens</p><p className="mt-2 text-sm text-[#173b2d]">{selectedItem.allergens.join(" · ")}</p></div><div className="rounded-2xl bg-white p-4"><p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#93988e]">Nutrition</p><p className="mt-2 text-sm text-[#173b2d]">{selectedItem.calories}</p></div></div></div>
-        </section>
-      </div>}
+      <Sheet open={selectedItem !== null} onOpenChange={(open) => !open && setSelectedItem(null)}>
+        <SheetContent side="bottom" className="mx-auto max-h-[92vh] w-full max-w-xl overflow-y-auto rounded-t-[2rem] border-0 bg-[#fbfaf6] p-0 text-[#173b2d]">
+          {selectedItem && <>
+            <div className="relative h-56 sm:h-72"><img src={selectedItem.image} alt="" className="size-full object-cover" /></div>
+            <div className="flex flex-col gap-5 p-6 pb-9"><SheetHeader className="flex-row items-start justify-between gap-4 space-y-0 text-left"><div><p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#a06d42]">{selectedItem.category}</p><SheetTitle className="mt-1 font-serif text-3xl font-normal text-[#173b2d]">{selectedItem.name}</SheetTitle></div><p className="pt-2 text-lg font-semibold text-[#a06d42]">{selectedItem.price}</p></SheetHeader><p className="text-sm leading-7 text-[#626b61]">{selectedItem.fullDescription}</p><div className="grid grid-cols-2 gap-3"><div className="rounded-2xl bg-white p-4"><p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#93988e]">Allergens</p><p className="mt-2 text-sm text-[#173b2d]">{selectedItem.allergens.join(" · ")}</p></div><div className="rounded-2xl bg-white p-4"><p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#93988e]">Nutrition</p><p className="mt-2 text-sm text-[#173b2d]">{selectedItem.calories}</p></div></div></div>
+          </>}
+        </SheetContent>
+      </Sheet>
     </main>
   )
 }
