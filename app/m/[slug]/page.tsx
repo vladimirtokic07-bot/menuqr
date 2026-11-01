@@ -1,8 +1,8 @@
 "use client"
 
 import { useMemo, useState } from "react"
-import { ChevronRight, Clock3, Flame, Leaf, Search } from "lucide-react"
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
+import { ChevronRight, Clock3, Flame, Leaf, Search, X } from "lucide-react"
+import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 
 type MenuItem = {
   name: string
@@ -150,9 +150,9 @@ export default function PublicMenuPage() {
       </div>
 
       <Sheet open={selectedItem !== null} onOpenChange={(open) => !open && setSelectedItem(null)}>
-        <SheetContent side="bottom" className="mx-auto max-h-[92vh] w-full max-w-xl overflow-y-auto rounded-t-[2rem] border-0 bg-[#fbfaf6] p-0 text-[#173b2d]">
+        <SheetContent side="bottom" showCloseButton={false} className="mx-auto max-h-[92vh] w-full max-w-xl overflow-y-auto rounded-t-[2rem] border-0 bg-[#fbfaf6] p-0 text-[#173b2d]">
           {selectedItem && <>
-            <div className="relative h-56 sm:h-72"><img src={selectedItem.image} alt="" className="size-full object-cover" /></div>
+            <div className="relative h-56 sm:h-72"><img src={selectedItem.image} alt="" className="size-full object-cover" /><SheetClose render={<button type="button" aria-label="Close details" className="absolute right-4 top-4 flex size-10 items-center justify-center rounded-full bg-emerald-950/85 text-white shadow-lg backdrop-blur-sm transition hover:bg-emerald-950" />}><X className="size-5" /></SheetClose></div>
             <div className="flex flex-col gap-5 p-6 pb-9"><SheetHeader className="flex-row items-start justify-between gap-4 space-y-0 text-left"><div><p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#a06d42]">{selectedItem.category}</p><SheetTitle className="mt-1 font-serif text-3xl font-normal text-[#173b2d]">{selectedItem.name}</SheetTitle></div><p className="pt-2 text-lg font-semibold text-[#a06d42]">{selectedItem.price}</p></SheetHeader><p className="text-sm leading-7 text-[#626b61]">{selectedItem.fullDescription}</p><div className="grid grid-cols-2 gap-3"><div className="rounded-2xl bg-white p-4"><p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#93988e]">Allergens</p><p className="mt-2 text-sm text-[#173b2d]">{selectedItem.allergens.join(" · ")}</p></div><div className="rounded-2xl bg-white p-4"><p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#93988e]">Nutrition</p><p className="mt-2 text-sm text-[#173b2d]">{selectedItem.calories}</p></div></div></div>
           </>}
         </SheetContent>
