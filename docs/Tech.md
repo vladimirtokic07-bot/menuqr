@@ -14,3 +14,4 @@
 3. Keep UI components in `components/ui` (shadcn) and business logic in `lib/` or `app/` API routes.
 4. Never commit `.env` files. Use `.env.local` for local development.
 5. Write meaningful, conventional commit messages (e.g., `feat: add supabase client`, `fix: hydration mismatch in dashboard`).
+6. All identifiers, aliases, comments, documentation and commit messages must be in English. Serbian is for chat only.
