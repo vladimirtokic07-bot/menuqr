@@ -3,7 +3,7 @@
 Legend: [ ] todo | [x] done
 Rule: one task in progress at a time. Loop per task: spec -> plan -> review -> act -> verify -> commit.
 
-## [ ] T1 - Env guard for Supabase client
+## [X] T1 - Env guard for Supabase client
 Goal: fail fast with a clear error if env vars are missing.
 Files: lib/supabase.ts
 Verify: dev server starts; with a var removed locally, error message is clear.
