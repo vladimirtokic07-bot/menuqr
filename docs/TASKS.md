@@ -22,7 +22,7 @@ Verify: /m/olive-salt shows 6 dishes grouped by category; changing a price in
 Supabase Table Editor shows the new price after browser refresh.
 Commit: feat: load guest menu from supabase
 
-## [ ] T4 - Unknown slug handling
+## [x] T4 - Unknown slug handling
 Goal: friendly not-found page for unknown slugs.
 Files: app/m/[slug]/page.tsx, app/m/[slug]/not-found.tsx (new)
 Verify: /m/does-not-exist renders friendly message with HTTP 404.
