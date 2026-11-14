@@ -9,7 +9,7 @@ Files: lib/supabase.ts
 Verify: dev server starts; with a var removed locally, error message is clear.
 Commit: fix: add env validation to supabase client
 
-## [ ] T2 - Live connection audit
+## [x] T2 - Live connection audit
 Goal: prove guest read works and guest write is blocked.
 Files: none (terminal checks only)
 Verify: GET menu_items -> HTTP 200 with 6 rows; POST menu_items -> HTTP 401/403.
