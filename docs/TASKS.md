@@ -15,7 +15,7 @@ Files: none (terminal checks only)
 Verify: GET menu_items -> HTTP 200 with 6 rows; POST menu_items -> HTTP 401/403.
 Commit: none
 
-## [ ] T3 - Guest menu live data
+## [x] T3 - Guest menu live data
 Goal: /m/[slug] renders categories and dishes from Supabase.
 Files: app/m/[slug]/page.tsx, components/guest-menu-view.tsx (new), lib/format.ts (new)
 Verify: /m/olive-salt shows 6 dishes grouped by category; changing a price in
