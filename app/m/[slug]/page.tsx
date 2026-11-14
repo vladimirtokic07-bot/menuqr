@@ -1,3 +1,5 @@
+import { notFound } from "next/navigation"
+
 import { supabase } from "@/lib/supabase"
 import { formatPrice } from "@/lib/format"
 import { GuestMenuView, type GuestMenuItem } from "@/components/guest-menu-view"
@@ -17,13 +19,7 @@ export default async function PublicMenuPage({ params }: PageProps) {
     .eq("slug", slug)
     .single()
 
-  if (!business) {
-    return (
-      <main className="flex min-h-screen items-center justify-center bg-[#fbfaf6] px-6 text-center text-[#173b2d]">
-        <p className="text-sm text-[#7a8077]">This menu could not be found.</p>
-      </main>
-    )
-  }
+  if (!business) notFound()
 
   const { data: categories } = await supabase
     .from("categories")
