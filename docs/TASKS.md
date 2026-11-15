@@ -34,7 +34,7 @@ Files: app/m/[slug]/page.tsx
 Verify: after 2 page visits, menu_scans row count grows by 2.
 Commit: feat: track guest menu scans
 
-## [ ] T6 - Docs sync and phase close
+## [x] T6 - Docs sync and phase close
 Goal: update DB.md and PRD.md to reflect live integration; close Phase 2.
 Files: docs/DB.md, docs/PRD.md, docs/TASKS.md
 Verify: docs match reality; all tasks checked.
