@@ -124,3 +124,32 @@ on conflict (business_id, name) do update set
   allergens      = excluded.allergens,
   calories       = excluded.calories,
   image_url      = excluded.image_url;
+
+-- ===== Scan tracking (T5): rolling 24h dedupe via SECURITY DEFINER =====
+-- Runs as the function owner, so the internal SELECT works even though the
+-- anon role only has INSERT on menu_scans (no SELECT).
+create or replace function public.register_scan(
+  p_business_id uuid,
+  p_ip_hash text
+)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if not exists (
+    select 1 from public.menu_scans
+    where business_id = p_business_id
+      and ip_hash = p_ip_hash
+      and scanned_at > now() - interval '24 hours'
+  ) then
+    insert into public.menu_scans (business_id, ip_hash)
+    values (p_business_id, p_ip_hash);
+  end if;
+end;
+$$;
+
+-- Least privilege: only anon (guest menu) and authenticated may call it.
+revoke all on function public.register_scan(uuid, text) from public;
+grant execute on function public.register_scan(uuid, text) to anon, authenticated;

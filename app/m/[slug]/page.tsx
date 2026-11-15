@@ -1,4 +1,8 @@
+import { createHash } from "node:crypto"
+
+import { headers } from "next/headers"
 import { notFound } from "next/navigation"
+import { after } from "next/server"
 
 import { supabase } from "@/lib/supabase"
 import { formatPrice } from "@/lib/format"
@@ -6,12 +10,28 @@ import { GuestMenuView, type GuestMenuItem } from "@/components/guest-menu-view"
 
 export const dynamic = "force-dynamic"
 
+const scanHashSalt = process.env.SCAN_HASH_SALT
+
+if (!scanHashSalt) {
+  throw new Error(
+    "Missing SCAN_HASH_SALT environment variable. Set it in .env.local"
+  )
+}
+
 type PageProps = {
   params: Promise<{ slug: string }>
 }
 
+function hashIp(ip: string): string {
+  return createHash("sha256").update(`${ip}${scanHashSalt}`).digest("hex")
+}
+
 export default async function PublicMenuPage({ params }: PageProps) {
   const { slug } = await params
+
+  const requestHeaders = await headers()
+  const forwardedFor = requestHeaders.get("x-forwarded-for")
+  const ip = forwardedFor?.split(",")[0]?.trim() || "unknown"
 
   const { data: business } = await supabase
     .from("businesses")
@@ -33,6 +53,24 @@ export default async function PublicMenuPage({ params }: PageProps) {
     .eq("business_id", business.id)
     .eq("is_active", true)
     .order("display_order")
+
+  const ipHash = hashIp(ip)
+  const businessId = business.id
+
+  after(async () => {
+    try {
+      const { error } = await supabase.rpc("register_scan", {
+        p_business_id: businessId,
+        p_ip_hash: ipHash,
+      })
+
+      if (error) {
+        console.error("Scan tracking failed:", error.message)
+      }
+    } catch (error) {
+      console.error("Scan tracking failed:", error)
+    }
+  })
 
   const nameById = new Map<string, string>(
     (categories ?? []).map((category): [string, string] => [category.id, category.name])
