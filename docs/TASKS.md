@@ -28,7 +28,7 @@ Files: app/m/[slug]/page.tsx, app/m/[slug]/not-found.tsx (new)
 Verify: /m/does-not-exist renders friendly message with HTTP 404.
 Commit: feat: add not-found state for guest menu
 
-## [ ] T5 - Scan tracking
+## [x] T5 - Scan tracking
 Goal: each guest menu view inserts one row into menu_scans.
 Files: app/m/[slug]/page.tsx
 Verify: after 2 page visits, menu_scans row count grows by 2.
