@@ -51,7 +51,7 @@ Manual steps live inside each task's Goal; the human runs them in the Supabase d
 
 OUT OF SCOPE for Phase 3: image uploads, multi-tenant onboarding, payments, i18n, chart libraries.
 
-## [ ] P3-T1 - Owner auth foundation
+## [x] P3-T1 - Owner auth foundation
 Goal: add Supabase Auth (email+password), a /login page, and auth helpers. Manual step: create one demo owner user in the Supabase dashboard.
 Files: package.json (add @supabase/ssr), lib/supabase.ts (add server + client auth helpers), app/login/page.tsx (new), components/login-form.tsx (new)
 Verify: /login renders; signing in with the demo owner redirects to /dashboard; invalid credentials show a user-facing error (no console.log).
