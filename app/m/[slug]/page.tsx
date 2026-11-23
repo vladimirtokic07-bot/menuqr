@@ -1,11 +1,10 @@
-import { createHash } from "node:crypto"
-
 import { headers } from "next/headers"
 import { notFound } from "next/navigation"
 import { after } from "next/server"
 
 import { supabase } from "@/lib/supabase"
 import { formatPrice } from "@/lib/format"
+import { hashIp } from "@/lib/hash"
 import { GuestMenuView, type GuestMenuItem } from "@/components/guest-menu-view"
 
 export const dynamic = "force-dynamic"
@@ -18,12 +17,13 @@ if (!scanHashSalt) {
   )
 }
 
+// Definitively-typed reference for use inside function declarations.
+// Control-flow narrowing is not preserved inside function bodies for these
+// module-level bindings (same pattern as lib/supabase.ts).
+const SCAN_HASH_SALT: string = scanHashSalt
+
 type PageProps = {
   params: Promise<{ slug: string }>
-}
-
-function hashIp(ip: string): string {
-  return createHash("sha256").update(`${ip}${scanHashSalt}`).digest("hex")
 }
 
 export default async function PublicMenuPage({ params }: PageProps) {
@@ -54,7 +54,7 @@ export default async function PublicMenuPage({ params }: PageProps) {
     .eq("is_active", true)
     .order("display_order")
 
-  const ipHash = hashIp(ip)
+  const ipHash = hashIp(ip, SCAN_HASH_SALT)
   const businessId = business.id
 
   after(async () => {
