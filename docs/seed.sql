@@ -21,6 +21,7 @@ create table if not exists categories (
   display_order integer not null default 0
 );
 
+
 create table if not exists menu_items (
   id uuid primary key default gen_random_uuid(),
   business_id uuid not null references businesses(id) on delete cascade,
@@ -52,6 +53,19 @@ create unique index if not exists businesses_slug_key on businesses (slug);
 create unique index if not exists categories_business_name_key on categories (business_id, name);
 create unique index if not exists menu_items_business_name_key on menu_items (business_id, name);
 
+-- ===== Ownership (P3-T2) =====
+-- owner_id is nullable by design: the existing olive-salt row has no owner
+-- until the manual linking step below. NULL never equals auth.uid(), so
+-- unowned rows stay invisible/immutable to owners (fail-closed).
+alter table businesses
+  add column if not exists owner_id uuid references auth.users(id) on delete set null;
+
+create index if not exists businesses_owner_id_idx on businesses (owner_id);
+
+-- MANUAL STEP (run in Supabase SQL editor, AFTER creating the demo owner in
+-- Authentication -> Users):
+--   UPDATE businesses SET owner_id = '<demo-owner-uuid>' WHERE slug = 'olive-salt';
+
 -- ===== Row Level Security =====
 alter table businesses enable row level security;
 alter table categories enable row level security;
@@ -67,6 +81,36 @@ create policy "public_read_businesses" on businesses for select using (true);
 create policy "public_read_categories" on categories for select using (true);
 create policy "public_read_menu_items"  on menu_items  for select using (true);
 create policy "public_insert_scans"     on menu_scans  for insert with check (true);
+
+-- ===== Owner RLS policies (P3-T2) =====
+-- Public SELECT using (true) stays active because the menu is public by design
+-- (guest scans QR). Owner SELECT policies are defensive/documentation only;
+-- isolation is enforced on WRITE (UPDATE/INSERT), not READ.
+drop policy if exists "owner_select_businesses" on businesses;
+drop policy if exists "owner_update_businesses" on businesses;
+drop policy if exists "owner_select_categories" on categories;
+drop policy if exists "owner_update_categories" on categories;
+drop policy if exists "owner_select_menu_items"  on menu_items;
+drop policy if exists "owner_update_menu_items"  on menu_items;
+drop policy if exists "owner_select_menu_scans"  on menu_scans;
+
+create policy "owner_select_businesses" on businesses for select to authenticated using (owner_id = auth.uid());
+create policy "owner_update_businesses" on businesses for update to authenticated using (owner_id = auth.uid());
+
+create policy "owner_select_categories" on categories for select to authenticated using (business_id in (select id from businesses where owner_id = auth.uid()));
+create policy "owner_update_categories" on categories for update to authenticated using (business_id in (select id from businesses where owner_id = auth.uid()));
+
+create policy "owner_select_menu_items" on menu_items for select to authenticated using (business_id in (select id from businesses where owner_id = auth.uid()));
+create policy "owner_update_menu_items" on menu_items for update to authenticated using (business_id in (select id from businesses where owner_id = auth.uid()));
+
+create policy "owner_select_menu_scans" on menu_scans for select to authenticated using (business_id in (select id from businesses where owner_id = auth.uid()));
+
+-- ===== Table privileges (P3-T2) =====
+-- Postgres checks table privileges BEFORE row-level security, so the
+-- authenticated role needs table-level grants for the owner policies above to
+-- be reachable. GRANT is idempotent (re-running is a no-op).
+grant update on businesses, categories, menu_items to authenticated;
+grant select on menu_scans to authenticated;
 
 -- ===== Seed: business =====
 insert into businesses (name, slug)

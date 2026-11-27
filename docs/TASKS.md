@@ -57,7 +57,7 @@ Files: package.json (add @supabase/ssr), lib/supabase.ts (add server + client au
 Verify: /login renders; signing in with the demo owner redirects to /dashboard; invalid credentials show a user-facing error (no console.log).
 Commit: feat: add owner auth foundation
 
-## [ ] P3-T2 - Ownership + protection
+## [x] P3-T2 - Ownership + protection
 Goal: add businesses.owner_id, owner RLS policies for businesses/categories/menu_items (SELECT + UPDATE) and menu_scans (SELECT for the owner via businesses.owner_id = auth.uid()), plus a server-side guard that redirects /dashboard to /login when there is no session. Manual step: link the demo owner uuid to the olive-salt business.
 Files: docs/seed.sql (owner_id column + owner RLS policies), lib/auth.ts (session helper), app/dashboard/layout.tsx (new)
 Verify: logged-out visit to /dashboard redirects to /login; the owner can read and update their own business, category, and menu_item rows; the owner can read only their own menu_scans; the owner cannot read or update another owner's rows.
